@@ -2,7 +2,7 @@
  * @Description: xingp，yyds
  * @Author: zaq
  * @Date: 2022-04-07 11:26:49
- * @LastEditTime: 2022-04-07 17:38:11
+ * @LastEditTime: 2022-04-08 09:47:27
  * @LastEditors: zaq
  * @Reference:
  */
@@ -45,7 +45,6 @@ yMusic.get("/recommend", async (ctx) => {
 });
 yMusic.get("/kuwo", async (ctx) => {
   const { data: html } = await axios.request("http://m.kuwo.cn/newh5app/");
-  console.log(html);
   const $ = cheerio.load(html);
   const banner = [];
   const top = {};
