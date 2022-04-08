@@ -2,7 +2,7 @@
  * @Description: xingp，yyds
  * @Author: zaq
  * @Date: 2022-04-07 11:26:49
- * @LastEditTime: 2022-04-08 09:47:27
+ * @LastEditTime: 2022-04-08 10:38:04
  * @LastEditors: zaq
  * @Reference:
  */
@@ -22,13 +22,13 @@ yMusic.get("/recommend", async (ctx) => {
       referer: "https://music.163.com/",
     },
   });
-  await axios.request({
-    url: "https://interface.music.163.com/weapi/personalized/newsong",
-    method: "post",
-    headers: {
-      referer: "https://y.music.163.com/",
-    },
-  });
+  // await axios.request({
+  //   url: "https://interface.music.163.com/weapi/personalized/newsong",
+  //   method: "post",
+  //   headers: {
+  //     referer: "https://y.music.163.com/",
+  //   },
+  // });
   const recommend = [];
   const $ = cheerio.load(html);
   $(".remd_ul a").each((i, v) => {
@@ -44,7 +44,12 @@ yMusic.get("/recommend", async (ctx) => {
   };
 });
 yMusic.get("/kuwo", async (ctx) => {
-  const { data: html } = await axios.request("http://m.kuwo.cn/newh5app/");
+  const { data: html } = await axios.request({
+    url: "http://m.kuwo.cn/newh5app/",
+    headers: {
+      Host: "m.kuwo.cn",
+    },
+  });
   const $ = cheerio.load(html);
   const banner = [];
   const top = {};
@@ -100,18 +105,6 @@ yMusic.get("/kuwo", async (ctx) => {
     listenBook,
   };
 });
-// 歌曲榜 标签tag
-yMusic.post('/kuwo/top/tag', async ctx => {
-  const {data} = await axios.request({
-    url: `http://m.kuwo.cn/newh5app/api/mobile/v1/typelist/rank`,
-    headers: {
-      Referer: `http://m.kuwo.cn/newh5app/`
-    }
-  })
-  ctx.body = {
-    data
-  }
-})
 /**
  * @description type 热歌榜16飙升榜93新歌榜17
  * pn 页码
@@ -121,7 +114,18 @@ yMusic.get("/kuwo/top", async (ctx) => {
   const { type, pn, rn } = ctx.query;
   const { data } = await axios.request({
     url: `http://m.kuwo.cn/newh5app/api/mobile/v1/music/rank/${type}?pn=${pn}&rn=${rn}`,
-    method: "post",
+  });
+  ctx.body = {
+    data,
+  };
+});
+// 歌曲榜 标签tag
+yMusic.post("/kuwo/top/tag", async (ctx) => {
+  const { data } = await axios.request({
+    url: `http://m.kuwo.cn/newh5app/api/mobile/v1/typelist/rank`,
+    headers: {
+      Referer: `http://m.kuwo.cn/newh5app/`,
+    },
   });
   ctx.body = {
     data,
@@ -201,133 +205,126 @@ yMusic.get("/kuwo/recommend/type/list", async (ctx) => {
   };
 });
 // 听书 type 1最热2最新
-yMusic.get('/kuwo/radio', async ctx => {
-  const {
-    type,
-    pn,
-    rn
-  } = ctx.query;
-  const {data} = await axios.request({
-    url: `http://m.kuwo.cn/newh5app/api/mobile/v1/radio/rcm/${type}?pn=${pn}&rn=${rn}`
-  })
+yMusic.get("/kuwo/radio", async (ctx) => {
+  const { type, pn, rn } = ctx.query;
+  const { data } = await axios.request({
+    url: `http://m.kuwo.cn/newh5app/api/mobile/v1/radio/rcm/${type}?pn=${pn}&rn=${rn}`,
+  });
   ctx.body = {
-    data
-  }
-})
+    data,
+  };
+});
 /**
  * 听书tag 有声小说8相声曲艺36两性情感34音乐故事37脱口秀35历史人物33儿童10
  */
-yMusic.get('/kuwo/radio/rank', async ctx => {
-  const {
-    id,
-    pn,
-    rn
-  } = ctx.query;
-  const {data} = await axios.request({
+yMusic.get("/kuwo/radio/rank", async (ctx) => {
+  const { id, pn, rn } = ctx.query;
+  const { data } = await axios.request({
     url: `http://m.kuwo.cn/newh5app/api/mobile/v1/radio/rank/${id}?pn=${pn}&rn=${rn}`,
     headers: {
-      Referer: 'http://m.kuwo.cn/newh5app/radio'
-    }
-  })
+      Referer: "http://m.kuwo.cn/newh5app/radio",
+    },
+  });
   ctx.body = {
-    data
-  }
-})
+    data,
+  };
+});
 // 专辑详情 有声小说详情
-yMusic.get('/kuwo/radio/album', async ctx => {
-  const {id,pn,rn, referer} = ctx.query;
-  const {data} = await axios.request({
+yMusic.get("/kuwo/radio/album", async (ctx) => {
+  const { id, pn, rn, referer } = ctx.query;
+  const { data } = await axios.request({
     url: `http://m.kuwo.cn/newh5app/api/mobile/v1/music/album/${id}?pn=${pn}&rn=${rn}`,
     headers: {
-      Referer: `http://m.kuwo.cn/newh5app/radio_classify/${referer||36}`
-    }
-  })
+      Referer: `http://m.kuwo.cn/newh5app/radio_classify/${referer || 36}`,
+    },
+  });
   ctx.body = {
-    data
-  }
-})
+    data,
+  };
+});
 // 热词
-yMusic.get('/kuwo/hotword', async ctx => {
-  const {data} = await axios.request('http://m.kuwo.cn/newh5app/api/mobile/v1/search/hotword');
+yMusic.get("/kuwo/hotword", async (ctx) => {
+  const { data } = await axios.request(
+    "http://m.kuwo.cn/newh5app/api/mobile/v1/search/hotword"
+  );
   ctx.body = {
-    data
-  }
-})
+    data,
+  };
+});
 // 搜索提示
-yMusic.get('/kuwo/search/tips', async ctx => {
-  const {
-    word
-  } = ctx.query;
-  const {data} = await axios.request(`http://m.kuwo.cn/newh5app/api/mobile/v1/search/tip?key=${word}`)
+yMusic.get("/kuwo/search/tips", async (ctx) => {
+  const { word } = ctx.query;
+  const { data } = await axios.request(
+    `http://m.kuwo.cn/newh5app/api/mobile/v1/search/tip?key=${word}`
+  );
   ctx.body = {
-    data
-  }
-})
+    data,
+  };
+});
 // 搜索
-yMusic.get('/kuwo/search/all', async ctx => {
-  const {
-    word
-  } = ctx.query;
-  const {data} = await axios.request(`http://m.kuwo.cn/newh5app/api/mobile/v1/search/all?key=${word}`);
+yMusic.get("/kuwo/search/all", async (ctx) => {
+  const { word } = ctx.query;
+  const { data } = await axios.request(
+    `http://m.kuwo.cn/newh5app/api/mobile/v1/search/all?key=${word}`
+  );
   ctx.body = {
-    data
-  }
-})
+    data,
+  };
+});
 // 歌手
-yMusic.get('/kuwo/artist', async ctx => {
-  const {id} = ctx.query;
-  const {data} = await axios.request({
+yMusic.get("/kuwo/artist", async (ctx) => {
+  const { id } = ctx.query;
+  const { data } = await axios.request({
     url: `http://m.kuwo.cn/newh5app/api/mobile/v1/artist/info/${id}`,
     headers: {
-      Referer: `http://m.kuwo.cn/newh5app/search`
-    }
-  })
+      Referer: `http://m.kuwo.cn/newh5app/search`,
+    },
+  });
   ctx.body = {
-    data
-  }
-})
+    data,
+  };
+});
 // 歌手 歌曲
-yMusic.get('/kuwo/artist/songs', async ctx => {
-  const {id,pn,rn} = ctx.query;
-  const {data} = await axios.request({
+yMusic.get("/kuwo/artist/songs", async (ctx) => {
+  const { id, pn, rn } = ctx.query;
+  const { data } = await axios.request({
     url: `http://m.kuwo.cn/newh5app/api/mobile/v1/music/artist/${id}?pn=${pn}&rn=${rn}`,
     headers: {
-      Referer: `http://m.kuwo.cn/newh5app/search`
-    }
-  })
+      Referer: `http://m.kuwo.cn/newh5app/search`,
+    },
+  });
   ctx.body = {
-    data
-  }
-})
+    data,
+  };
+});
 // 歌曲 视频
 /**
  * @description source 默认是7 推荐视频播放是74（歌手视频7 用户74）
  */
-yMusic.get('/kuwo/song/video', async ctx => {
-  const {id, source} = ctx.query;
-  const {data} = await axios.request({
+yMusic.get("/kuwo/song/video", async (ctx) => {
+  const { id, source } = ctx.query;
+  const { data } = await axios.request({
     url: `http://m.kuwo.cn/newh5app/api/mobile/v1/video/info/${id}?source=${source}`,
     headers: {
-      Referer: `http://m.kuwo.cn/newh5app/ranklist_detail/16`
-    }
-  })
+      Referer: `http://m.kuwo.cn/newh5app/ranklist_detail/16`,
+    },
+  });
   ctx.body = {
-    data
-  }
-})
+    data,
+  };
+});
 // 歌曲 视频 推荐视频
-yMusic.get('/kuwo/song/video/recommend', async ctx => {
-  const {id} = ctx.query;
-  const {data} = await axios.request({
+yMusic.get("/kuwo/song/video/recommend", async (ctx) => {
+  const { id } = ctx.query;
+  const { data } = await axios.request({
     url: `http://m.kuwo.cn/newh5app/api/mobile/v1/video/rcmlist/${id}?source=7`,
     headers: {
-      Referer: `http://m.kuwo.cn/newh5app/ranklist_detail/16`
-    }
-  })
+      Referer: `http://m.kuwo.cn/newh5app/ranklist_detail/16`,
+    },
+  });
   ctx.body = {
-    data
-  }
-})
-
+    data,
+  };
+});
 
 module.exports = yMusic;
