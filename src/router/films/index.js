@@ -2,7 +2,7 @@
  * @Description: xingp，yyds
  * @Author: zaq
  * @Date: 2022-04-15 09:34:45
- * @LastEditTime: 2022-04-15 16:20:12
+ * @LastEditTime: 2022-04-15 17:00:44
  * @LastEditors: zaq
  * @Reference:
  */
@@ -231,5 +231,49 @@ films.get("/play", async (ctx) => {
     link: `https://www.pkmp4.com/addons/dplayer/?url=${url}`,
   };
 });
+films.get('/search', async ctx => {
+  const {wd} = ctx.query;
+  const {data: html} = await axios.request({
+    url: `${baseUrl}/vs/-------------.html?wd=${wd}`,
+    headers: {
+      referer: baseUrl
+    }
+  });
+  const $ = cheerio.load(html);
+  const list = [];
+  const all = parseInt($('.main .breadcrumbs').text().substring(4));
+  const temp = $('.main .sr_lists dl');
+  if (all && temp.length) {
+    //
+    
+    temp.each((i, v) => {
+      const obj = {};
+      obj.pic = baseUrl + $(v).find('dt a img').attr('src');
+      const _t = $(v).find('dd p');
+      obj.title = _t.eq(0).find('strong a').text();
+      obj.id = getStrId(_t.eq(0).find('strong a').attr('href'));
+      obj.state = _t.eq(0).find('.ss1').text();
+      obj.nickname = _t.eq(1).text();
+      obj.local = _t.eq(2).text();
+      obj.starring = _t.eq(3).text();
+      obj.time = _t.eq(4).text();
+      obj.description = _t.eq(5).text()
+
+      list.push(obj)
+    })
+    ctx.body = {
+      count: all,
+      list,
+      msg: '查询成功'
+    }
+  } else {
+    ctx.body = {
+      count: all,
+      msg: `没有搜到有关于${wd}的信息`,
+      list: [],
+      html
+    }
+  }
+})
 
 module.exports = films;
