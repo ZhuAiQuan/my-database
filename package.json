@@ -9,9 +9,10 @@
     "mysql": "^2.18.1"
   },
   "scripts": {
-    "start": "node src/main"
+    "start": "nodemon src/main"
   },
   "devDependencies": {
-    "cheerio": "^1.0.0-rc.10"
+    "cheerio": "^1.0.0-rc.10",
+    "nodemon": "^2.0.15"
   }
 }

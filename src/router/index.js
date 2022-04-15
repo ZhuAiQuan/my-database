@@ -2,7 +2,7 @@
  * @Description: xingp，yyds
  * @Author: zaq
  * @Date: 2021-12-23 11:00:55
- * @LastEditTime: 2022-04-07 11:29:03
+ * @LastEditTime: 2022-04-15 09:37:18
  * @LastEditors: zaq
  * @Reference: 
  */
@@ -14,6 +14,7 @@ const gateway = require('./gateway');
 const jianshu = require('./jianshu');
 const yMusic = require('./ymusic')
 const errorPage = require('./errorPage')
+const films = require('./films')
 
 const router = new Router();
 // router.get('/', async ctx => {
@@ -29,6 +30,7 @@ router.use('/api', api.routes(), api.allowedMethods());
 router.use('/gateway', gateway.routes(), gateway.allowedMethods())
 router.use('/jianshu', jianshu.routes(), jianshu.allowedMethods())
 router.use('/yMusic', yMusic.routes(), yMusic.allowedMethods())
+router.use('/films', films.routes(), films.allowedMethods())
 
 router.redirect('/', '/home')
 
