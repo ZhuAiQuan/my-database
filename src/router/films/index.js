@@ -2,7 +2,7 @@
  * @Description: xingp，yyds
  * @Author: zaq
  * @Date: 2022-04-15 09:34:45
- * @LastEditTime: 2022-04-15 17:00:44
+ * @LastEditTime: 2022-04-15 17:39:19
  * @LastEditors: zaq
  * @Reference:
  */
@@ -10,7 +10,7 @@ const Router = require("koa-router");
 const films = new Router();
 const cheerio = require("cheerio");
 const axios = require("../../utils");
-const { getStrId } = require("../../utils/tools");
+const { getStrId, parse } = require("../../utils/tools");
 const baseUrl = "https://www.pkmp4.com";
 
 films.get("/", async (ctx) => {
@@ -273,6 +273,17 @@ films.get('/search', async ctx => {
       list: [],
       html
     }
+  }
+})
+films.get('/parse', async ctx => {
+  const {url} = ctx.query;
+  const links = [];
+  for(const key in parse) {
+    links.push(`${parse[key]}${url}`)
+  }
+  ctx.body = {
+    msg: '获取链接成功!',
+    links
   }
 })
 
