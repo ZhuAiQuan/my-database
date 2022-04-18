@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "cheerio": "^1.0.0-rc.10",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "urlencode": "^1.1.0"
   }
 }
