@@ -2,7 +2,7 @@
  * @Description: xingp，yyds
  * @Author: zaq
  * @Date: 2022-04-15 09:34:45
- * @LastEditTime: 2022-04-18 14:02:01
+ * @LastEditTime: 2022-04-18 14:05:42
  * @LastEditors: zaq
  * @Reference:
  */
@@ -101,7 +101,7 @@ films.get("/detail", async (ctx) => {
   const info = {};
   const first = $(".main-left .wrap").eq(0);
   info.pic = baseUrl + first.find(".img img").attr("src");
-  info.title = first.find(".img img").attr("title");
+  info.title = first.find(".img img").attr("alt");
   info.filmYear = formatStr(first.find(".main-ui-meta h1 .year").text());
   info.other = first.find(".otherbox").text();
   info.director = [];
