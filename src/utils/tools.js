@@ -2,7 +2,7 @@
  * @Description: xingp，yyds
  * @Author: zaq
  * @Date: 2022-04-15 16:08:29
- * @LastEditTime: 2022-04-15 17:34:52
+ * @LastEditTime: 2022-04-18 14:01:28
  * @LastEditors: zaq
  * @Reference: 
  */
@@ -26,7 +26,21 @@ const getStrId = str => {
   }
 }
 
+const formatStr = str => {
+  if (str.includes('[收起部分]')) str = str.replace('[收起部分]', '');
+  if (str.includes('：')) {
+    str = str.split('：')[1];
+  }
+  if (str.includes('(')) str = str.replace('(', '')
+  if (str.includes(')')) str = str.replace(')', '')
+  if (str.includes('\n')) {
+    str = formatStr(str.replace('\n', ''));
+  }
+  return str
+}
+
 module.exports = {
   getStrId,
-  parse
+  parse,
+  formatStr
 }

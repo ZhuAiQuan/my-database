@@ -2,7 +2,7 @@
  * @Description: xingp，yyds
  * @Author: zaq
  * @Date: 2022-04-15 09:34:45
- * @LastEditTime: 2022-04-18 13:20:20
+ * @LastEditTime: 2022-04-18 14:02:01
  * @LastEditors: zaq
  * @Reference:
  */
@@ -10,7 +10,7 @@ const Router = require("koa-router");
 const films = new Router();
 const cheerio = require("cheerio");
 const axios = require("../../utils");
-const { getStrId, parse } = require("../../utils/tools");
+const { getStrId, parse, formatStr } = require("../../utils/tools");
 const baseUrl = "https://www.pkmp4.com";
 const urlencode = require("urlencode");
 
@@ -102,7 +102,7 @@ films.get("/detail", async (ctx) => {
   const first = $(".main-left .wrap").eq(0);
   info.pic = baseUrl + first.find(".img img").attr("src");
   info.title = first.find(".img img").attr("title");
-  info.filmYear = first.find(".main-ui-meta h1 .year").text();
+  info.filmYear = formatStr(first.find(".main-ui-meta h1 .year").text());
   info.other = first.find(".otherbox").text();
   info.director = [];
   first
@@ -110,11 +110,11 @@ films.get("/detail", async (ctx) => {
     .eq(1)
     .find("a")
     .each((i, v) => {
-      const obj = {};
-      obj.link = $(v).attr("href");
-      // obj.id = getStrId(obj.id);
-      obj.name = $(v).text();
-      info.director.push(obj);
+      // const obj = {};
+      // obj.link = $(v).attr("href");
+      // // obj.id = getStrId(obj.id);
+      // obj.name = $(v).text();
+      info.director.push($(v).text());
     });
   info.screenwriter = [];
   first
@@ -122,11 +122,11 @@ films.get("/detail", async (ctx) => {
     .eq(2)
     .find("a")
     .each((i, v) => {
-      const obj = {};
-      obj.link = $(v).attr("href");
-      // obj.id = getStrId(obj.id);
-      obj.name = $(v).text();
-      info.screenwriter.push(obj);
+      // const obj = {};
+      // obj.link = $(v).attr("href");
+      // // obj.id = getStrId(obj.id);
+      // obj.name = $(v).text();
+      info.screenwriter.push($(v).text());
     });
   info.starring = [];
   first
@@ -134,11 +134,11 @@ films.get("/detail", async (ctx) => {
     .eq(3)
     .find("a")
     .each((i, v) => {
-      const obj = {};
-      obj.link = $(v).attr("href");
-      // obj.id = getStrId(obj.id);
-      obj.name = $(v).text();
-      info.starring.push(obj);
+      // const obj = {};
+      // obj.link = $(v).attr("href");
+      // // obj.id = getStrId(obj.id);
+      // obj.name = $(v).text();
+      info.starring.push($(v).text());
     });
   info.type = [];
   first
@@ -146,38 +146,40 @@ films.get("/detail", async (ctx) => {
     .eq(4)
     .find("a")
     .each((i, v) => {
-      const obj = {};
-      obj.link = $(v).attr("href");
-      // obj.id = getStrId(obj.id);
-      obj.name = $(v).text();
-      info.type.push(obj);
+      // const obj = {};
+      // obj.link = $(v).attr("href");
+      // // obj.id = getStrId(obj.id);
+      // obj.name = $(v).text();
+      info.type.push($(v).text());
     });
-  info.local = {
-    name: first.find(".main-ui-meta div").eq(5).find("a").text(),
-    link: first.find(".main-ui-meta div").eq(5).find("a").attr("href"),
-  };
-  info.language = {
-    name: first.find(".main-ui-meta div").eq(6).find("a").text(),
-    link: first.find(".main-ui-meta div").eq(6).find("a").attr("href"),
-  };
+  // info.local = {
+  //   name: first.find(".main-ui-meta div").eq(5).find("a").text(),
+  //   link: first.find(".main-ui-meta div").eq(5).find("a").attr("href"),
+  // };
+  info.local = first.find(".main-ui-meta div").eq(5).find("a").text();
+  // info.language = {
+  //   name: first.find(".main-ui-meta div").eq(6).find("a").text(),
+  //   link: first.find(".main-ui-meta div").eq(6).find("a").attr("href"),
+  // };
+  info.language = first.find(".main-ui-meta div").eq(6).find("a").text();
   info.playDate = first.find(".main-ui-meta div").eq(7).text();
-  info.time = first.find(".main-ui-meta div").eq(8).text();
-  info.nickname = first.find(".main-ui-meta div").eq(9).text();
+  info.time = formatStr(first.find(".main-ui-meta div").eq(8).text());
+  info.nickname = formatStr(first.find(".main-ui-meta div").eq(9).text());
   info.grade = {
     count: first.find(".main-ui-meta div").eq(10).find("a span").text(),
     link: first.find(".main-ui-meta div").eq(10).find("a").attr("href"),
   };
-  info.description = $(".main-left .wrap")
+  info.description = formatStr($(".main-left .wrap")
     .eq(1)
     .find(".movie-introduce .sqjj_a")
-    .text();
+    .text());
 
   const download = [];
   const online = [];
 
   $("#donLink .hd ul li").each((i, v) => {
     const obj = {};
-    obj.name = $(v).text();
+    obj.name = formatStr($(v).text());
     obj.downlink = [];
     $("#donLink .down-list ul")
       .eq(i)
@@ -215,7 +217,7 @@ films.get("/detail", async (ctx) => {
 films.get("/play", async (ctx) => {
   const { id } = ctx.query;
   const { data: html } = await axios.request(
-    `https://www.pkmp4.com/py/${id}.html`
+    `${baseUrl}/py/${id}.html`
   );
   const $ = cheerio.load(html);
   const sourceStr = $(".p_movie script").html();
@@ -229,7 +231,7 @@ films.get("/play", async (ctx) => {
 
   ctx.body = {
     url,
-    link: `https://www.pkmp4.com/addons/dplayer/?url=${url}`,
+    link: `${baseUrl}/addons/dplayer/?url=${url}`,
   };
 });
 films.get("/search", async (ctx) => {
@@ -300,7 +302,7 @@ films.get("/stock", async (ctx) => {
   page = page || "1";
   style = style || '1';
   const { data: html } = await axios.request(
-    `https://www.pkmp4.com/ms/${style}-${local}-${sort}-${type}-${lang}----${page}---${era}.html`
+    `${baseUrl}/ms/${style}-${local}-${sort}-${type}-${lang}----${page}---${era}.html`
   );
 
   const $ = cheerio.load(html);
